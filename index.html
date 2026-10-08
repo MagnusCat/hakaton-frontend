@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>МедКлиника — расписание врачей</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div id="app">
+    <section id="login-view" class="login-view hidden">
+      <div class="login-card">
+        <div class="login-logo">Мед<span>Клиника</span></div>
+        <h1>Вход в систему</h1>
+        <form id="login-form" novalidate>
+          <label for="login-input">Логин</label>
+          <input id="login-input" type="text" autocomplete="username" required />
+
+          <label for="password-input">Пороль</label>
+          <input id="password-input" type="password" autocomplete="current-password" required />
+
+          <div id="login-error" class="form-error hidden">Неверный логин или пароль</div>
+
+          <button type="submit" class="btn btn-primary btn-block">Войти</button>
+        </form>
+        <div class="login-hint">
+          Демо-доступ:<br>
+                       админ:<code>admin / admin123</code><br>
+                       пациент:<code>admin / admin123</code>
+        </div>
+      </div>
+    </section>
+
+    <section id="main-view" class="main-view hidden">
+      <header class="header">
+        <div class="header-logo">Мед<span>Клиника</span></div>
+        <nav id="nav" class="nav"></nav>
+        <div class="header-user">
+          <span id="current-user"></span>
+          <button id="logout-btn" class="btn btn-ghost">Выйти</button>
+        </div>
+      </header>
+
+      <main id="view" class="view"></main>
+    </section>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
