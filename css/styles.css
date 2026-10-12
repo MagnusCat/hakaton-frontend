@@ -437,6 +437,148 @@ body {
   line-height: 1.7;
 }
 
+.btn-sm {
+  padding: 5px 12px;
+  font-size: 13px;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.auth-switch {
+  margin: 14px 0 0;
+  font-size: 13px;
+  color: var(--muted);
+  text-align: center;
+}
+
+.link-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--primary);
+  font: inherit;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.link-btn:hover {
+  color: var(--primary-dark);
+}
+
+.role-warn {
+  background: #fdf3e3;
+  color: var(--warn);
+}
+
+.booking {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 14px;
+  align-items: end;
+}
+
+.booking-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.booking-field label {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.booking-field select,
+.booking-field input {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 14px;
+  background: #fff;
+}
+
+.booking-field select:focus,
+.booking-field input:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+.booking-slots {
+  grid-column: 1 / -1;
+}
+
+.booking > .btn {
+  grid-column: 1 / -1;
+  justify-self: start;
+}
+
+.booking > .btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.slots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-height: 36px;
+  align-items: center;
+}
+
+.slot {
+  border: 1px solid var(--border);
+  background: #fff;
+  border-radius: 8px;
+  padding: 7px 14px;
+  font-size: 14px;
+  cursor: pointer;
+  color: var(--text);
+}
+
+.slot:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.slot.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+
+.slot-busy {
+  color: #b7bec9;
+  background: #f4f6f9;
+  text-decoration: line-through;
+  cursor: not-allowed;
+}
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  max-width: 90vw;
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-size: 14px;
+  color: #fff;
+  background: #374151;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  z-index: 100;
+}
+
+.toast-ok {
+  background: var(--ok);
+}
+
+.toast-error {
+  background: var(--danger);
+}
+
 @media (max-width: 760px) {
   .header {
     flex-wrap: wrap;
@@ -452,5 +594,9 @@ body {
   .schedule-spec {
     grid-column: 1 / -1;
     text-align: left;
+  }
+
+  .booking {
+    grid-template-columns: 1fr;
   }
 }

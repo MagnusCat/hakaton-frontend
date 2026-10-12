@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>МедКлиника — расписание врачей</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%231976d2'/%3E%3Cpath d='M42 20h16v22h22v16H58v22H42V58H20V42h22z' fill='white'/%3E%3C/svg%3E" />
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
@@ -11,22 +12,53 @@
     <section id="login-view" class="login-view hidden">
       <div class="login-card">
         <div class="login-logo">Мед<span>Клиника</span></div>
-        <h1>Вход в систему</h1>
-        <form id="login-form" novalidate>
-          <label for="login-input">Логин</label>
-          <input id="login-input" type="text" autocomplete="username" required />
 
-          <label for="password-input">Пороль</label>
-          <input id="password-input" type="password" autocomplete="current-password" required />
+        <div id="auth-login">
+          <h1>Вход в систему</h1>
+          <form id="login-form" novalidate>
+            <label for="login-input">Логин</label>
+            <input id="login-input" type="text" autocomplete="username" required />
 
-          <div id="login-error" class="form-error hidden">Неверный логин или пароль</div>
+            <label for="password-input">Пароль</label>
+            <input id="password-input" type="password" autocomplete="current-password" required />
 
-          <button type="submit" class="btn btn-primary btn-block">Войти</button>
-        </form>
-        <div class="login-hint">
-          Демо-доступ:<br>
-                       админ:<code>admin / admin123</code><br>
-                       пациент:<code>admin / admin123</code>
+            <div id="login-error" class="form-error hidden" role="alert"></div>
+
+            <button type="submit" class="btn btn-primary btn-block">Войти</button>
+          </form>
+          <p class="auth-switch">
+            Нет аккаунта?
+            <button type="button" id="show-register" class="link-btn">Зарегистрироваться как пациент</button>
+          </p>
+          <div class="login-hint">
+            Демо-доступ:<br>
+                         админ:<code>admin / admin123</code>
+          </div>
+        </div>
+
+        <div id="auth-register" class="hidden">
+          <h1>Регистрация пациента</h1>
+          <form id="register-form" novalidate>
+            <label for="reg-first-name">Имя</label>
+            <input id="reg-first-name" type="text" autocomplete="given-name" required />
+
+            <label for="reg-last-name">Фамилия</label>
+            <input id="reg-last-name" type="text" autocomplete="family-name" required />
+
+            <label for="reg-login">Логин</label>
+            <input id="reg-login" type="text" autocomplete="username" required minlength="3" />
+
+            <label for="reg-password">Пароль (минимум 4 символа)</label>
+            <input id="reg-password" type="password" autocomplete="new-password" required minlength="4" />
+
+            <div id="register-error" class="form-error hidden" role="alert"></div>
+
+            <button type="submit" class="btn btn-primary btn-block">Зарегистрироваться</button>
+          </form>
+          <p class="auth-switch">
+            Уже есть аккаунт?
+            <button type="button" id="show-login" class="link-btn">Войти</button>
+          </p>
         </div>
       </div>
     </section>
@@ -45,7 +77,8 @@
     </section>
   </div>
 
-  <script src="js/data.js"></script>
+  <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+
   <script src="js/api.js"></script>
   <script src="js/app.js"></script>
 </body>

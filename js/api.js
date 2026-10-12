@@ -1,51 +1,132 @@
 window.API = (function () {
-  const BASE_URL = "/api";
+  const BASE_URL = "http://159.194.246.91:8090/api";
 
-  const clone = (data) => JSON.parse(JSON.stringify(data));
+  const getToken = () => localStorage.getItem("token");
+  const setToken = (t) =>
+    t ? localStorage.setItem("token", t) : localStorage.removeItem("token");
 
-  const delay = (data, ms) =>
-    new Promise((resolve) => setTimeout(() => resolve(clone(data)), ms || 120));
-
-  function validateUniqueTimes(doctors) {
-    const seen = new Map();
-    for (const doctor of doctors) {
-      if (seen.has(doctor.time)) return { ok: false, time: doctor.time };
-      seen.set(doctor.time, doctor.id);
-    }
-    return { ok: true };
+  function toISODate(d) {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${y}-${m}-${day}`;
   }
+
+  async function request(path, { method = "GET", body, auth = true } = {}) {
+    const headers = {};
+    if (body !== undefined) headers["Content-Type"] = "application/json";
+    if (auth && getToken()) headers["Authorization"] = "Bearer " + getToken();
+
+    const res = await fetch(BASE_URL + path, {
+      method,
+      headers,
+      body: body === undefined ? undefined : JSON.stringify(body)
+    });
+
+    if (!res.ok) {
+      let msg = "Ошибка запроса (" + res.status + ")";
+      try {
+        const d = await res.json();
+        if (d && d.message) msg = d.message;
+      } catch (_) {}
+      if (res.status === 401 && auth) {
+        setToken(null);
+        throw new Error("Требуется авторизация");
+      }
+      throw new Error(msg);
+    }
+    return res.status === 204 ? null : res.json();
+  }
+
+  const roleLabel = (role) => (role === "ADMIN" ? "администратор" : "пользователь");
 
   return {
     async login(login, password) {
-      const user = window.DB.users.find(
-        (u) => u.login === login && u.password === password
-      );
-      if (!user) throw new Error("Неверный логин или пароль");
-      return delay({ login: user.login, role: user.role });
+      const d = await request("/auth/login", {
+        method: "POST",
+        auth: false,
+        body: { login, password }
+      });
+      setToken(d.token);
+      return {
+        login: d.login,
+        role: roleLabel(d.role),
+        firstName: d.firstName,
+        lastName: d.lastName
+      };
     },
 
-    async getDoctors() {
-      return delay(window.DB.doctors);
+    async register(login, password, firstName, lastName) {
+      await request("/auth/register", {
+        method: "POST",
+        auth: false,
+        body: { login, password, firstName, lastName, role: "PATIENT" }
+      });
+      return this.login(login, password);
     },
 
-    async getScheduleByDate(date) {
-      const jsDay = date.getDay();
-      const list = window.DB.doctors
-        .filter((d) => d.days.includes(jsDay))
-        .sort((a, b) => a.time.localeCompare(b.time));
-      return delay(list);
+    hasToken() {
+      return !!getToken();
     },
 
-    async getSpecialties() {
-      return delay(window.DB.specialties);
+    async me() {
+      const d = await request("/auth/me");
+      return {
+        login: d.login,
+        role: roleLabel(d.role),
+        firstName: d.firstName,
+        lastName: d.lastName
+      };
+    },
+
+    logout() {
+      setToken(null);
+    },
+
+    getDoctors() {
+      return request("/doctors");
+    },
+
+    getScheduleByDate(date) {
+      return request("/schedule?date=" + toISODate(date));
+    },
+
+    getSpecialties() {
+      return request("/specialties");
     },
 
     async getUsers() {
-      return delay(window.DB.users);
+      const users = await request("/users");
+      return users.map((u) => ({ ...u, role: roleLabel(u.role) }));
     },
 
-    async checkTimesUnique() {
-      return validateUniqueTimes(window.DB.doctors);
+    checkTimesUnique() {
+      return request("/doctors/unique-times");
+    },
+
+    getEmployees() {
+      return request("/employees");
+    },
+
+    getAppointments() {
+      return request("/appointments");
+    },
+
+    bookAppointment(doctorId, date, time) {
+      return request("/appointments", {
+        method: "POST",
+        body: { doctorId, date: toISODate(date), time }
+      });
+    },
+
+    cancelAppointment(id) {
+      return request("/appointments/" + id, { method: "DELETE" });
+    },
+
+    getSlots(doctorId, fromDate, days = 14) {
+      return request(
+        "/doctors/" + doctorId + "/slots?from=" + toISODate(fromDate) + "&days=" + days
+      );
     }
   };
 })();
